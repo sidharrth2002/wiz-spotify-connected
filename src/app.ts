@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import path from 'path';
 import NodeCache from 'node-cache';
 import { appConfig } from './configs/app-config.js';
 import authRouter from './handlers/route-handlers/auth-router.js';
@@ -14,6 +15,7 @@ const app: Express = express();
 const cacheManager = container.get<NodeCache>(TYPES.CacheManager);
 const logger = container.get<Logger>(TYPES.Logger);
 
+app.use(express.static(path.join(process.cwd(), 'public')));
 app.use('/', danceToSpotifyRouter, systemAudioRouter, roomsRouter, authRouter);
 
 app.listen(appConfig.port, async () => {

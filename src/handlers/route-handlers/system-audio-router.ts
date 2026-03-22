@@ -33,7 +33,7 @@ systemAudioRouter.get('/dance-to-system-audio', async (req: Request) => {
     const mode = resolveMode(req.query.mode);
     const sensitivity = resolveSensitivity(req.query.sensitivity);
 
-    await listenToDanceToSpotifyEvent(roomIds);
+    await listenToDanceToSpotifyEvent(roomIds, mode);
     await emitDanceToSystemAudioEvent(mode, { sensitivity });
   } catch (err: any) {
     logger.error('Error while running Mac audio sync', err.message);
@@ -65,6 +65,8 @@ const resolveMode = (modeQuery: unknown): Mode => {
       return Mode.party;
     case Mode.auto:
       return Mode.auto;
+    case Mode.surround:
+      return Mode.surround;
     default:
       return Mode.auto;
   }

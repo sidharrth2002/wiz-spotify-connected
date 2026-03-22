@@ -24,6 +24,7 @@ export const emitDanceToSystemAudioEvent = async (mode: Mode, options?: SystemAu
   audioEngine.configure({ sensitivity: options?.sensitivity });
 
   let lastBeatTimestamp = Date.now();
+  let leftTurn = true;
 
   await audioService.start(async (frame) => {
     if (cacheManager.get('instance') !== 'running') return;
@@ -33,7 +34,16 @@ export const emitDanceToSystemAudioEvent = async (mode: Mode, options?: SystemAu
     if (!lights) return;
 
     lastBeatTimestamp = frame.timestamp;
-    eventBus.emit('changeLights', lights.brightness, lights.colorSpace);
+    if (mode === Mode.surround) {
+      eventBus.emit('changeLightsSurround', {
+        side: leftTurn ? 'left' : 'right',
+        brightness: lights.brightness,
+        colorSpace: lights.colorSpace
+      });
+      leftTurn = !leftTurn;
+    } else {
+      eventBus.emit('changeLights', lights.brightness, lights.colorSpace);
+    }
 
     await sleep(lights.delayMs);
   });

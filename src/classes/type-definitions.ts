@@ -59,5 +59,6 @@ export enum LogOutput {
 export enum Mode {
   calm = 'calm',
   party = 'party',
-  auto = 'auto'
+  auto = 'auto',
+  surround = 'surround'
 }
