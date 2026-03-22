@@ -45,7 +45,11 @@ export const getRooms = async (): Promise<Record<string, any>> => {
 
 export const setRoom = async (roomId: string, config: Bulb, colorSpace?: ColorSpace) => {
   const cacheManager = container.get<NodeCache>(TYPES.CacheManager);
-  const bulbs: Array<[string, string]> = (<Record<string, any>>cacheManager.get('rooms'))[roomId];
+  const rooms = await ensureRoomsCache();
+  const bulbs: Array<[string, string]> = rooms?.[roomId];
+  if (!bulbs || bulbs.length === 0) {
+    throw new Error(`No bulbs found for room ${roomId}. Run /rooms to refresh discovery.`);
+  }
   const socket = container.get<Socket>(TYPES.Socket);
 
   await new Promise<void>((resolve) => {
@@ -125,6 +129,18 @@ const buildRoomData = (rawData: Map<string, Map<string, string>>) => {
 
   for (let [roomId, bulbs] of (rawData).entries()) {
     Object.assign(rooms, { [roomId]: [...bulbs] });
+  }
+
+  return rooms;
+};
+
+const ensureRoomsCache = async (): Promise<Record<string, Array<[string, string]>>> => {
+  const cacheManager = container.get<NodeCache>(TYPES.CacheManager);
+  let rooms = cacheManager.get<Record<string, Array<[string, string]>>>('rooms');
+
+  if (!rooms) {
+    rooms = await getRooms();
+    cacheManager.set('rooms', rooms);
   }
 
   return rooms;

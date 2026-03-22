@@ -4,6 +4,7 @@ import { appConfig } from './configs/app-config.js';
 import authRouter from './handlers/route-handlers/auth-router.js';
 import danceToSpotifyRouter from './handlers/route-handlers/dance-to-spotify-router.js';
 import roomsRouter from './handlers/route-handlers/rooms-router.js';
+import systemAudioRouter from './handlers/route-handlers/system-audio-router.js';
 import { getRooms } from './services/wiz/lights-service.js';
 import { container } from './utils/inversify-orchestrator.js';
 import { Logger } from './utils/logger.js';
@@ -13,7 +14,7 @@ const app: Express = express();
 const cacheManager = container.get<NodeCache>(TYPES.CacheManager);
 const logger = container.get<Logger>(TYPES.Logger);
 
-app.use('/', danceToSpotifyRouter, roomsRouter, authRouter);
+app.use('/', danceToSpotifyRouter, systemAudioRouter, roomsRouter, authRouter);
 
 app.listen(appConfig.port, async () => {
   cacheManager.set('rooms', await getRooms());

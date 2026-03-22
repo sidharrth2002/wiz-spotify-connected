@@ -11,6 +11,8 @@ import { createHttpClient } from './http-client.js';
 import { Logger } from './logger.js';
 import { TYPES } from './types.js';
 import { DanceEngine } from './dance-engine.js';
+import { SystemAudioEngine } from './system-audio-engine.js';
+import { SystemAudioService } from '../services/audio/system-audio-service.js';
 
 const createContainer = (): Container => {
   const container = new Container();
@@ -26,6 +28,8 @@ const createContainer = (): Container => {
 
   container.bind<Logger>(TYPES.Logger).toConstantValue(logger);
   container.bind<DanceEngine>(TYPES.DanceEngine).to(DanceEngine).inSingletonScope();
+  container.bind<SystemAudioEngine>(TYPES.SystemAudioEngine).to(SystemAudioEngine).inSingletonScope();
+  container.bind<SystemAudioService>(TYPES.SystemAudioService).to(SystemAudioService).inSingletonScope();
   container.bind<Got>(TYPES.HttpClient).toConstantValue(createHttpClient(logger));
   container.bind<Socket>(TYPES.Socket).toDynamicValue(() => dgram.createSocket('udp4')).inRequestScope();
   container.bind<EventEmitter>(TYPES.EventBus).toConstantValue(new EventEmitter());

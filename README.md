@@ -16,6 +16,28 @@ If Spotify revises their decision on these API restrictions in the future, there
 
 (The original project instructions and setup details remain below for reference.)
 
+## New: Local Audio Mode (macOS)
+
+Even though Spotify locked down the Audio Analysis API, you can still make your Wiz lights react to music by sampling the sound that macOS is playing. The new `/dance-to-system-audio` endpoint reads CoreAudio output, detects peaks/energy in real time, and drives the bulbs with the same UDP pipeline—no Spotify account or tokens required.
+
+### Prerequisites
+
+1. Install a virtual audio driver such as [BlackHole 2ch](https://github.com/ExistentialAudio/BlackHole) so macOS can mirror its output into an input stream.
+2. In **Audio MIDI Setup** create a Multi-Output device that includes both your speakers/headphones and BlackHole, then set it as the default output.
+3. Grant your terminal of choice **Settings → Privacy & Security → Screen & System Audio Recording → System Audio Recording Only** permission so macOS lets it tap the Multi-Output device. The first run should prompt you automatically, but adding it manually avoids silent captures.
+4. Make sure Xcode CLT (`xcode-select --install`) are installed so native modules can bootstrap successfully.
+
+### Running the Mac audio sync
+
+1. Start the server with `npm run start`.
+2. Open `http://localhost:8888/dance-to-system-audio` (optionally add `?roomIds=6931115,6930575`).
+3. Fine-tune behaviour with:
+    * `mode=auto|calm|party` – same semantics as the Spotify mode selection.
+    * `sensitivity=1.0-2.5` – raise this if beats trigger too often; lower it if the lights feel too sluggish.
+4. Use `http://localhost:8888/dance-to-system-audio/abort` (or the existing abort endpoint) to stop the capture.
+
+Silence for ~30 seconds automatically ends the session, so the bulbs do not stay locked if you pause playback.
+
 
 
 ## Features
@@ -87,6 +109,8 @@ If Spotify revises their decision on these API restrictions in the future, there
     * If your setup is a bit more complicated where you have similar number of bulbs in multiple rooms, you can simply go with trial and error method to determine the roomIds or you can check the mac addresses in your router's admin panel to determine the room they are in.
 8. Now go to "[http://localhost:8888/dance-to-spotify](http://localhost:8888/dance-to-spotify)" or "[http://localhost:8888/dance-to-spotify?roomIds=6931115,6930575](http://localhost:8888/dance-to-spotify?roomIds=6931115,6930575)" (if you are enabling for selected rooms), and that's it.
 9. If you would like to keep the app running but turn off the dance session, you can do so by calling "[http://localhost:8888/dance-to-spotify/abort](http://localhost:8888/dance-to-spotify/abort)" (Useful for running the app in the background in perpetuity).
+
+> macOS-only tip: if you would rather react to any audio source (YouTube, Apple Music, etc.), head to the [Local Audio Mode](#new-local-audio-mode-macos) section and use `http://localhost:8888/dance-to-system-audio` instead of the Spotify endpoints.
 
 ***
 

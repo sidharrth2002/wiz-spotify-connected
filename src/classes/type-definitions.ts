@@ -43,6 +43,14 @@ export type Lights = {
   brightness: number;
 }
 
+export type AudioFrame = {
+  rms: number;
+  peak: number;
+  dominantFrequency: number;
+  sampleRate: number;
+  timestamp: number;
+}
+
 export enum LogOutput {
   console,
   file
