@@ -1,8 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 import NodeCache from 'node-cache';
-import { Mode } from '../../classes/type-definitions.js';
+import { Bulb, Mode } from '../../classes/type-definitions.js';
 import { emitDanceToSystemAudioEvent } from '../emitters/system-audio-emitter.js';
 import { listenToDanceToSpotifyEvent } from '../listeners/dance-to-spotify-listener.js';
+import { setRoom } from '../../services/wiz/lights-service.js';
 import { container } from '../../utils/inversify-orchestrator.js';
 import { Logger } from '../../utils/logger.js';
 import { TYPES } from '../../utils/types.js';
@@ -33,6 +34,13 @@ systemAudioRouter.get('/dance-to-system-audio', async (req: Request) => {
     const mode = resolveMode(req.query.mode);
     const sensitivity = resolveSensitivity(req.query.sensitivity);
 
+    if (!roomIds.length) {
+      logger.warn('No rooms selected or discovered; skipping audio sync start.');
+      return;
+    }
+
+    await kickRooms(roomIds);
+
     await listenToDanceToSpotifyEvent(roomIds, mode);
     await emitDanceToSystemAudioEvent(mode, { sensitivity });
   } catch (err: any) {
@@ -54,6 +62,21 @@ const resolveRoomIds = (roomQuery: unknown): Array<string> => {
 
   const rooms = cacheManager.get<Record<string, any>>('rooms');
   return rooms ? Object.keys(rooms) : [];
+};
+
+const kickRooms = async (roomIds: Array<string>) => {
+  const pulse: Bulb = {
+    state: true,
+    brightness: 40,
+    color: { red: 255, green: 120, blue: 40 }
+  };
+
+  try {
+    await Promise.all(roomIds.map((roomId) => setRoom(roomId, pulse)));
+    logger.debug('Kick pulse sent to rooms', roomIds);
+  } catch (err: any) {
+    logger.error('Kick pulse failed', err?.message ?? err);
+  }
 };
 
 const resolveMode = (modeQuery: unknown): Mode => {

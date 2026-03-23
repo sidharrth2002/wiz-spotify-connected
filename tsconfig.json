@@ -11,5 +11,8 @@
     "strict": true,
     "skipLibCheck": true,
     "sourceMap": true
-  }
+  },
+  "exclude": [
+    "web"
+  ]
 }

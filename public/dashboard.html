@@ -246,14 +246,24 @@
 
     async function loadRooms() {
       setStatus('Loading rooms…');
-      try {
-        const res = await fetch('/rooms');
-        const data = await res.json();
-        renderRooms(data);
-        setStatus('Rooms loaded');
-      } catch (err) {
-        setStatus('Failed to load rooms: ' + err.message);
+      const origins = [window.location.origin, 'http://localhost:8888', 'http://127.0.0.1:8888'];
+      let lastErr;
+
+      for (const origin of origins) {
+        try {
+          const res = await fetch(origin + '/rooms');
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+          renderRooms(data);
+          setStatus('Rooms loaded from ' + origin);
+          console.log('Rooms payload', data);
+          return;
+        } catch (err) {
+          lastErr = err;
+        }
       }
+
+      setStatus('Failed to load rooms: ' + (lastErr?.message || 'unknown error'));
     }
 
     function renderRooms(data) {

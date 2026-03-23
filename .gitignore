@@ -34,6 +34,9 @@ public
 !public/
 !public/dashboard.html
 !public/dashboard.html
+web/node_modules
+web/dist
+data/layout.json
 
 # Editor
 .vscode

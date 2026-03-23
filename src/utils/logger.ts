@@ -23,22 +23,17 @@ export class Logger {
       console.info(message);
     }
 
-    if (this.logOutput === LogOutput.file) {
-      this.fileWriter.append(message, optionalParams);
-    }
+    this.fileWriter.append(message, optionalParams);
   }
 
   public debug(message: string, ...optionalParams: any[]) {
     if (this.debugMode) {
-      if (this.logOutput === LogOutput.file) {
-        this.fileWriter.append(message, optionalParams);
+      if (optionalParams.length > 0) {
+        console.debug(message, optionalParams);
       } else {
-        if (optionalParams.length > 0) {
-          console.debug(message, optionalParams);
-        } else {
-          console.debug(message);
-        }
+        console.debug(message);
       }
+      this.fileWriter.append(message, optionalParams);
     }
   }
 
@@ -49,9 +44,7 @@ export class Logger {
       console.warn(message);
     }
 
-    if (this.logOutput === LogOutput.file) {
-      this.fileWriter.append(message, optionalParams);
-    }
+    this.fileWriter.append(message, optionalParams);
   }
 
   public error(message: string, ...optionalParams: any[]) {
@@ -61,8 +54,6 @@ export class Logger {
       console.error(message);
     }
 
-    if (this.logOutput === LogOutput.file) {
-      this.fileWriter.append(message, optionalParams);
-    }
+    this.fileWriter.append(message, optionalParams);
   }
 }

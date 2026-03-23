@@ -16,10 +16,15 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf dist/ && tsc",
+    "build:all": "npm run build && npm run build:web",
+    "build:web": "cd web && npm install --no-fund --no-audit && npm run build",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/app.js\"",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:web\"",
+    "dev:web": "cd web && npm install --no-fund --no-audit && npm run dev",
     "lint": "eslint . --fix --ext .js,.ts",
     "prepare": "sort-package-json && npm run build",
-    "start": "eslint && rimraf dist/ && tsc && node dist/app.js",
+    "start": "npm run dev:all",
+    "start:prod": "eslint && npm run build:all && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -39,6 +44,7 @@
     "@types/node": "20.5.7",
     "@typescript-eslint/eslint-plugin": "6.5.0",
     "@typescript-eslint/parser": "6.5.0",
+    "concurrently": "8.2.2",
     "eslint": "8.48.0",
     "nodemon": "3.0.1",
     "rimraf": "5.0.1",

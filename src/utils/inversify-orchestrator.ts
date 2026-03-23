@@ -22,8 +22,8 @@ const createContainer = (): Container => {
     deleteOnExpire: true
   }));
 
-  const enableDebugMode = process.argv.some(arg => arg === 'debug');
-  const logOutput = process.argv.some(arg => arg === 'file') ? LogOutput.file : LogOutput.console;
+  const enableDebugMode = true; // always emit debug logs
+  const logOutput = LogOutput.console;
   const logger = new Logger(enableDebugMode, logOutput, new FileWriter());
 
   container.bind<Logger>(TYPES.Logger).toConstantValue(logger);
