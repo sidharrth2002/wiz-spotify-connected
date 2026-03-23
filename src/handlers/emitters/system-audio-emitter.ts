@@ -30,13 +30,15 @@ export const emitDanceToSystemAudioEvent = async (mode: Mode, options?: SystemAu
   await audioService.start(async (frame) => {
     if (cacheManager.get('instance') !== 'running') return;
 
-    const lights = audioEngine.processFrame(frame, mode);
+    const currentMode = cacheManager.get<Mode>('activeMode') ?? mode;
+
+    const lights = audioEngine.processFrame(frame, currentMode);
 
     if (!lights) return;
 
     lastBeatTimestamp = frame.timestamp;
     lastIdlePulseAt = 0;
-    if (mode === Mode.surround) {
+    if (currentMode === Mode.surround) {
       eventBus.emit('changeLightsSurround', {
         side: leftTurn ? 'left' : 'right',
         brightness: lights.brightness,
@@ -63,7 +65,9 @@ export const emitDanceToSystemAudioEvent = async (mode: Mode, options?: SystemAu
       const colorSpace = Math.random() > 0.5 ? ColorSpace.blue : ColorSpace.purple;
 
       // Reuse same emit path to ensure rooms get a pulse
-      if (mode === Mode.surround) {
+      const currentMode = cacheManager.get<Mode>('activeMode') ?? mode;
+
+      if (currentMode === Mode.surround) {
         eventBus.emit('changeLightsSurround', {
           side: leftTurn ? 'left' : 'right',
           brightness: pulseBrightness,

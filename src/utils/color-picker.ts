@@ -1,4 +1,5 @@
 import { Color, ColorSpace, Ran } from '../classes/type-definitions.js';
+import { getPalette } from '../services/color-theme-service.js';
 
 const colorPicker = {
   purple: [
@@ -299,17 +300,8 @@ export const getColorSpace = (key: Ran<12>) => {
 };
 
 export const calculateColors = (colorSpace: ColorSpace, times: number): Array<Color> => {
-  const map = {
-    [ColorSpace.purple]: colorPicker.purple,
-    [ColorSpace.pink]: colorPicker.pink,
-    [ColorSpace.red]: colorPicker.red,
-    [ColorSpace.orange]: colorPicker.orange,
-    [ColorSpace.yellow]: colorPicker.yellow,
-    [ColorSpace.green]: colorPicker.green,
-    [ColorSpace.blue]: colorPicker.blue
-  };
-
-  const arr = map[colorSpace];
+  const palette = getPalette();
+  const arr = palette[colorSpace] ?? colorPicker.blue;
   const colors: Array<Color> = [];
 
   for (let i = 0; i < times; i++) {

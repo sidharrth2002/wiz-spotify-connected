@@ -2,6 +2,9 @@
   font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', sans-serif;
   color-scheme: dark;
   --bg: #050910;
+  --bg-gradient: radial-gradient(900px at 10% 10%, rgba(124, 240, 255, 0.08), transparent),
+              radial-gradient(700px at 90% 20%, rgba(199, 255, 96, 0.06), transparent),
+              linear-gradient(145deg, #04070f, #0b1627 55%, #04070f);
   --panel: rgba(255, 255, 255, 0.06);
   --border: rgba(255, 255, 255, 0.12);
   --text: #e9f0ff;
@@ -14,9 +17,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(900px at 10% 10%, rgba(124, 240, 255, 0.08), transparent),
-              radial-gradient(700px at 90% 20%, rgba(199, 255, 96, 0.06), transparent),
-              linear-gradient(145deg, #04070f, #0b1627 55%, #04070f);
+  background: var(--bg-gradient);
   color: var(--text);
 }
 
